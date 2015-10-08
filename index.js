@@ -56,7 +56,7 @@ class Release extends EventEmitter {
   }
 
   publishRelease(releaseTag, releaseNotes) {
-    let ghPublishResult = exec(`curl -H "Content-Type: application/json" -X POST -d '{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}${releaseNotes}\"}' https://api.github.com/repos/${this.options.github_path}/releases?access_token=${env.GH_API_TOKEN}`);
+    let ghPublishResult = exec(`curl -H "Content-Type: application/json" -X POST -d '{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}\\n${releaseNotes}\"}' https://api.github.com/repos/${this.options.github_path}/releases?access_token=${env.GH_API_TOKEN}`);
     assert.strictEqual(ghPublishResult.code, 0, `Failed to publish release to githun: ${ghPublishResult.output}`);
     this.emit('done', `Release Completed: ${ghPublishResult.output}`);
   }

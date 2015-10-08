@@ -1,4 +1,7 @@
 # github-releaser
+**master**  [![Circle CI](https://circleci.com/gh/asilluron/github-releaser/tree/master.svg?style=svg)](https://circleci.com/gh/asilluron/github-releaser/tree/master)
+**develop** [![Circle CI](https://circleci.com/gh/asilluron/github-releaser/tree/develop.svg?style=svg)](https://circleci.com/gh/asilluron/github-releaser/tree/develop)
+
 Continuous Deployment for Node. Works with CircleCI, Travis CI ... etc
 
 ## Requirements
