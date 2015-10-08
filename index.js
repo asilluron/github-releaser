@@ -4,7 +4,7 @@ require('shelljs/global');
 var assert = require('assert');
 var EventEmitter = require('events');
 
-class Release extends EventEmitter{
+class Release extends EventEmitter {
 
   constructor(options) {
     super();
@@ -40,16 +40,18 @@ class Release extends EventEmitter{
         assert.strictEqual(buildCommitResult.code, 0, 'Commiting build back to repo failed');
         let buildPushResult = exec('git push');
         assert.strictEqual(buildPushResult.code, 0, 'Pushing build to remote has failed');
-        let checkoutMasterResult = exec('git checkout master');
-        assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
-        let developMergeResult = exec('git merge --no-ff --no-edit develop');
-        assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
-
-        let releaseTag = this.getNewVersion();
 
       }
-    } else {
+      let checkoutMasterResult = exec('git checkout master');
+      assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
+      let developMergeResult = exec('git merge --no-ff --no-edit develop');
+      assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
+      let releaseTag = this.getNewVersion();
 
+      //Go free into the world release!
+      this.publishRelease(releaseTag, releaseNotes);
+    } else {
+      echo(`Release cancelled. No Release notes found. ${releaseNotes}`);
     }
   }
 
@@ -69,8 +71,9 @@ class Release extends EventEmitter{
   }
 
   gatherReleaseNotes(lastTag) {
-    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..origin | grep -oh '${this.options.commit_regex}'`);
-    return releaseNotesRes.output.trim().replace(/(?:\r\n|\r|\n)/g, '\\n');
+    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..HEAD | grep -oh '${this.options.commit_regex}'`);
+    assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
+    return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
 
   getNewVersion() {
@@ -83,3 +86,5 @@ class Release extends EventEmitter{
   }
 
 }
+
+module.exports = Release;
