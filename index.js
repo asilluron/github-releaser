@@ -79,7 +79,7 @@ class Release extends EventEmitter {
   getNewVersion() {
     let npmVersionResult = exec('npm version patch');
     assert.strictEqual(npmVersionResult.code, 0, 'Failed to bump patch version of repo');
-    let versionPushResult = exec('git push');
+    let versionPushResult = exec('git push --tags');
     assert.strictEqual(versionPushResult.code, 0, 'Failed to push new tag');
 
     return npmVersionResult.output.trim();
