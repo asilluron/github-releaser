@@ -1,0 +1,8 @@
+machine:
+  node:
+    version: v4.1.2
+deployment:
+  acceptance:
+    branch: develop
+    commands:
+      - node ./example/release

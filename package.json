@@ -1,0 +1,36 @@
+{
+  "name": "github-releaser",
+  "version": "0.0.0",
+  "description": "Node CD script for publishing releases to Github.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asilluron/github-releaser.git"
+  },
+  "keywords": [
+    "node",
+    "cd",
+    "github",
+    "release",
+    "releaser",
+    "circleci",
+    "circle",
+    "ci",
+    "travis",
+    "ci",
+    "continous",
+    "deployment"
+  ],
+  "author": "Andrew Silluron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asilluron/github-releaser/issues"
+  },
+  "homepage": "https://github.com/asilluron/github-releaser#readme",
+  "dependencies": {
+    "shelljs": "^0.5.3"
+  }
+}
