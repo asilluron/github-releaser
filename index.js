@@ -83,3 +83,5 @@ class Release extends EventEmitter{
   }
 
 }
+
+module.exports = Release;
