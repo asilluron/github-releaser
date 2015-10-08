@@ -49,7 +49,7 @@ class Release extends EventEmitter{
 
       }
     } else {
-
+      echo(`Release cancelled. No Release notes found. ${releaseNotes}`);
     }
   }
 
@@ -70,7 +70,8 @@ class Release extends EventEmitter{
 
   gatherReleaseNotes(lastTag) {
     let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..HEAD | grep -oh '${this.options.commit_regex}'`);
-    return releaseNotesRes.output.trim().replace(/(?:\r\n|\r|\n)/g, '\\n');
+    assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
+    return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
 
   getNewVersion() {
