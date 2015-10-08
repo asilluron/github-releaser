@@ -10,13 +10,9 @@ var releaseOptions = {
   commit_regex: '^\*.*'
 };
 
-try {
-  var release = new Release(releaseOptions);
+var release = new Release(releaseOptions);
 
-  release.on('done', () => {
-    console.log('Release Complete');
-  });
-} catch ( releaseError ) {
-  console.err(releaseError);
-}
+release.on('done', () => {
+  console.log('Release Complete');
+});
 
