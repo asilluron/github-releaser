@@ -69,7 +69,7 @@ class Release extends EventEmitter{
   }
 
   gatherReleaseNotes(lastTag) {
-    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..origin | grep -oh '${this.options.commit_regex}'`);
+    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..HEAD | grep -oh '${this.options.commit_regex}'`);
     return releaseNotesRes.output.trim().replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
 
