@@ -71,7 +71,7 @@ class Release extends EventEmitter {
   }
 
   gatherReleaseNotes(lastTag) {
-    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..MASTER | grep -oh '${this.options.commit_regex}'`);
+    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..origin | grep -oh '${this.options.commit_regex}'`);
     assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
     return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
