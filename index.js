@@ -44,6 +44,8 @@ class Release extends EventEmitter {
       }
       let checkoutMasterResult = exec('git checkout master');
       assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
+      let pullResult = exec(`git pull origin master`);
+      assert.strictEqual(pullResult.code, 0, 'Failed to pull master');
       let developMergeResult = exec('git merge --no-ff --no-edit develop');
       assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
       let mergePushResult = exec('git push origin master');
