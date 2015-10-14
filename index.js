@@ -63,11 +63,8 @@ class Release extends EventEmitter {
 
   getLastAvailableTag() {
     let describeRes = exec('git describe --tags --abbrev=0');
-    if (describeRes.code === 0) {
-      return describeRes.output.trim();
-    } else {
-      throw new Error('Could not describe current git repo');
-    }
+    assert.strictEqual(describeRes.code, 0, `Could not describe current git repo ${describeRes.output}`);
+    return describeRes.output.trim();
   }
 
   gatherReleaseNotes(lastTag) {
@@ -76,14 +73,15 @@ class Release extends EventEmitter {
     echo(logCmd);
     let releaseNotesRes = exec(logCmd);
     assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
+
     return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
 
   getNewVersion() {
     let npmVersionResult = exec('npm version patch');
-    assert.strictEqual(npmVersionResult.code, 0, 'Failed to bump patch version of repo');
-    let versionPushResult = exec('git push --tags');
-    assert.strictEqual(versionPushResult.code, 0, 'Failed to push new tag');
+    assert.strictEqual(npmVersionResult.code, 0, `Failed to bump patch version of repo ${npmVersionResult.output}`);
+    let versionPushResult = exec('git push --tags'); //TODO: Spike forcing (with lease) this push
+    assert.strictEqual(versionPushResult.code, 0, `Failed to push new tag ${versionPushResult.output}`);
 
     return npmVersionResult.output.trim();
   }
