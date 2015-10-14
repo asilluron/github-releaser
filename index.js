@@ -81,9 +81,11 @@ class Release extends EventEmitter {
     const logCmd = `git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..origin | grep -oh '${this.options.commit_regex}'`;
     echo(logCmd);
     let releaseNotesRes = exec(logCmd);
-    assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
-
-    return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
+    if (releaseNotesRes.code === 1) {
+      return '';
+    } else {
+      return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
+    }
   }
 
   getNewVersion() {
