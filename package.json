@@ -4,7 +4,7 @@
   "description": "Node CD script for publishing releases to Github.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,9 @@
   "homepage": "https://github.com/asilluron/github-releaser#readme",
   "dependencies": {
     "shelljs": "^0.5.3"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3"
   }
 }
