@@ -8,6 +8,7 @@ class Release extends EventEmitter {
 
   constructor(options) {
     super();
+
     assert(which('git'), 'This script requires git');
     assert(options.name, "Please set the app's name via options.name");
     assert(options.github_path, "Please set the app's Github Path with options.github_path");
@@ -71,6 +72,7 @@ class Release extends EventEmitter {
   getLastAvailableTag() {
     let describeRes = exec('git describe --tags --abbrev=0');
     assert.strictEqual(describeRes.code, 0, `Could not describe current git repo ${describeRes.output}`);
+
     return describeRes.output.trim();
   }
 
@@ -92,7 +94,6 @@ class Release extends EventEmitter {
 
     return npmVersionResult.output.trim();
   }
-
 }
 
 module.exports = Release;
