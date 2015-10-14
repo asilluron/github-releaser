@@ -24,7 +24,7 @@ class Release extends EventEmitter {
 
     this.options = Object.assign(defaultOptions, options);
 
-    exec('git fetch --all');
+    exec('git fetch --tags');
     exec(`git config --global user.email "${options.github_ident_name}"`);
     exec(`git config --global user.name "${options.github_ident_name}"`);
 
