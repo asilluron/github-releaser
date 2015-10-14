@@ -1,10 +1,18 @@
 # github-releaser
+**master**  [![Circle CI](https://circleci.com/gh/asilluron/github-releaser/tree/master.svg?style=svg)](https://circleci.com/gh/asilluron/github-releaser/tree/master)
+**develop** [![Circle CI](https://circleci.com/gh/asilluron/github-releaser/tree/develop.svg?style=svg)](https://circleci.com/gh/asilluron/github-releaser/tree/develop)
+
 Continuous Deployment for Node. Works with CircleCI, Travis CI ... etc
 
 ## Requirements
-* Node v4.1.0+ or iojs 1.x+
+* Node v4.1.0+ or iojs 1.x.x+
 
 ## Usage
+### Github Token
+You need to generate and externalize a [Github access token](https://help.github.com/articles/creating-an-access-token-for-command-line-use/) for your repo.
+
+The token is read from the build machine from the variable: `GH_API_TOKEN`
+
 ### Options (pass to Release class as a single object)
   * name - The name of the app, e.g. 'Github Releaser',
   * github_path - The short github path to the project - 'asilluron/github-releaser',

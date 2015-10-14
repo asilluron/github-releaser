@@ -4,7 +4,7 @@ require('shelljs/global');
 var assert = require('assert');
 var EventEmitter = require('events');
 
-class Release extends EventEmitter{
+class Release extends EventEmitter {
 
   constructor(options) {
     super();
@@ -38,48 +38,59 @@ class Release extends EventEmitter{
         echo('Build Complete: ${buildResult.output}');
         let buildCommitResult = exec('git commit -am "Deploy/Build"');
         assert.strictEqual(buildCommitResult.code, 0, 'Commiting build back to repo failed');
-        let buildPushResult = exec('git push');
+        let buildPushResult = exec('git push origin develop');
         assert.strictEqual(buildPushResult.code, 0, 'Pushing build to remote has failed');
-        let checkoutMasterResult = exec('git checkout master');
-        assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
-        let developMergeResult = exec('git merge --no-ff --no-edit develop');
-        assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
-
-        let releaseTag = this.getNewVersion();
 
       }
-    } else {
+      let checkoutMasterResult = exec('git checkout master');
+      assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
+      let pullResult = exec(`git pull origin master`);
+      assert.strictEqual(pullResult.code, 0, 'Failed to pull master');
+      let developMergeResult = exec('git merge --no-ff --no-edit develop');
+      assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
+      let mergePushResult = exec('git push origin master');
+      assert.strictEqual(mergePushResult.code, 0, 'Failed to push master after merging with develop');
 
+      let releaseTag = this.getNewVersion();
+
+      //Go free into the world release!
+      this.publishRelease(releaseTag, releaseNotes);
+    } else {
+      echo(`Release cancelled. No Release notes found. ${releaseNotes}`);
     }
   }
 
   publishRelease(releaseTag, releaseNotes) {
-    let ghPublishResult = exec(`curl -H "Content-Type: application/json" -X POST -d '{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}${releaseNotes}\"}' https://api.github.com/repos/${this.options.github_path}/releases?access_token=${env.GH_API_TOKEN}`);
+    let ghPublishResult = exec(`curl -H "Content-Type: application/json" -X POST -d '{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}\\n${releaseNotes}\"}' https://api.github.com/repos/${this.options.github_path}/releases?access_token=${env.GH_API_TOKEN}`);
     assert.strictEqual(ghPublishResult.code, 0, `Failed to publish release to githun: ${ghPublishResult.output}`);
     this.emit('done', `Release Completed: ${ghPublishResult.output}`);
   }
 
   getLastAvailableTag() {
     let describeRes = exec('git describe --tags --abbrev=0');
-    if (describeRes.code === 0) {
-      return describeRes.output.trim();
-    } else {
-      throw new Error('Could not describe current git repo');
-    }
+    assert.strictEqual(describeRes.code, 0, `Could not describe current git repo ${describeRes.output}`);
+    return describeRes.output.trim();
   }
 
   gatherReleaseNotes(lastTag) {
-    let releaseNotesRes = exec(`git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag}..origin | grep -oh '${this.options.commit_regex}'`);
-    return releaseNotesRes.output.trim().replace(/(?:\r\n|\r|\n)/g, '\\n');
+    echo(`Gathering release notes for ${lastTag}`);
+    const logCmd = `git log --pretty=format:%B  --grep=${this.options.commit_header} ${lastTag} | grep -oh '${this.options.commit_regex}'`;
+    echo(logCmd);
+    let releaseNotesRes = exec(logCmd);
+    assert.strictEqual(releaseNotesRes.code, 0, `There was an error while retrieving git logs. ${releaseNotesRes.output}`);
+
+    return releaseNotesRes.output.replace(/(?:\r\n|\r|\n)/g, '\\n');
   }
 
   getNewVersion() {
     let npmVersionResult = exec('npm version patch');
-    assert.strictEqual(npmVersionResult.code, 0, 'Failed to bump patch version of repo');
-    let versionPushResult = exec('git push');
-    assert.strictEqual(versionPushResult.code, 0, 'Failed to push new tag');
+    assert.strictEqual(npmVersionResult.code, 0, `Failed to bump patch version of repo ${npmVersionResult.output}`);
+    let versionPushResult = exec('git push --tags origin master'); //TODO: Spike forcing (with lease) this push
+    assert.strictEqual(versionPushResult.code, 0, `Failed to push new tag ${versionPushResult.output}`);
 
     return npmVersionResult.output.trim();
   }
 
 }
+
+module.exports = Release;
