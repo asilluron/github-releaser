@@ -5,7 +5,7 @@
 Continuous Deployment for Node. Works with CircleCI, Travis CI ... etc
 
 ## Requirements
-* Node v4.1.0+ or iojs 1.x+
+* Node v4.1.0+ or iojs 1.x.x+
 
 ## Usage
 ### Github Token
