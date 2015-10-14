@@ -1,6 +1,6 @@
 {
   "name": "github-releaser",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Node CD script for publishing releases to Github.",
   "main": "index.js",
   "scripts": {
