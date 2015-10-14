@@ -61,7 +61,7 @@ class Release extends EventEmitter {
   }
 
   publishRelease(releaseTag, releaseNotes) {
-    const payload = '{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}\\n${releaseNotes}\"}';
+    const payload = `{\"tag_name\":\"${releaseTag}\",\"name\":\"${this.options.name} Version ${releaseTag}\", \"body\":\"# ${this.options.release_header}\\n${releaseNotes}\"}`;
     echo(`Deploying release with payload: ${payload}`);
     let ghPublishResult = exec(`curl -H "Content-Type: application/json" -X POST -d '${payload}' https://api.github.com/repos/${this.options.github_path}/releases?access_token=${env.GH_API_TOKEN}`);
     assert.strictEqual(ghPublishResult.code, 0, `Failed to publish release to githun: ${ghPublishResult.output}`);
