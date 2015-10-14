@@ -38,7 +38,7 @@ class Release extends EventEmitter {
         echo('Build Complete: ${buildResult.output}');
         let buildCommitResult = exec('git commit -am "Deploy/Build"');
         assert.strictEqual(buildCommitResult.code, 0, 'Commiting build back to repo failed');
-        let buildPushResult = exec('git push');
+        let buildPushResult = exec('git push origin develop');
         assert.strictEqual(buildPushResult.code, 0, 'Pushing build to remote has failed');
 
       }
@@ -46,6 +46,9 @@ class Release extends EventEmitter {
       assert.strictEqual(checkoutMasterResult.code, 0, 'Failed to check out master branch. Please ensure the script has access and master branch exists');
       let developMergeResult = exec('git merge --no-ff --no-edit develop');
       assert.strictEqual(developMergeResult.code, 0, 'Failed to merge develop with master before publishing release');
+      let mergePushResult = exec('git push origin master');
+      assert.strictEqual(mergePushResult.code, 0, 'Failed to push master after merging with develop');
+
       let releaseTag = this.getNewVersion();
 
       //Go free into the world release!
@@ -80,7 +83,7 @@ class Release extends EventEmitter {
   getNewVersion() {
     let npmVersionResult = exec('npm version patch');
     assert.strictEqual(npmVersionResult.code, 0, `Failed to bump patch version of repo ${npmVersionResult.output}`);
-    let versionPushResult = exec('git push --tags'); //TODO: Spike forcing (with lease) this push
+    let versionPushResult = exec('git push --tags origin master'); //TODO: Spike forcing (with lease) this push
     assert.strictEqual(versionPushResult.code, 0, `Failed to push new tag ${versionPushResult.output}`);
 
     return npmVersionResult.output.trim();
